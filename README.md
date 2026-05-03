@@ -36,7 +36,7 @@ Custom integration for RSI Videofied alarm panels
 
 ## Alarm configuration
 
-Refer to your alarm panel [installation guide](https://github.com/Frifri400-B/rsi-videofied-ha/tree/main/documentations)
+Refer to your alarm panel [installation guide](documentations/)
 
 ## Configuration
 
