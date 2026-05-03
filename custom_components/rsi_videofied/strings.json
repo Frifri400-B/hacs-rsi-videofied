@@ -1,0 +1,23 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "RSI Videofied Alarm",
+        "description": "Configure the connection to your RSI Videofied alarm panel.",
+        "data": {
+          "host": "Bind address (leave empty for all interfaces)",
+          "port": "Listening port",
+          "alarm_code": "Alarm PIN code (for HA UI)",
+          "alarm_name": "Device name"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot start server on this port",
+      "invalid_code": "Code must be at least 4 digits"
+    },
+    "abort": {
+      "already_configured": "RSI Videofied is already configured"
+    }
+  }
+}
