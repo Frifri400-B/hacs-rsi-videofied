@@ -1,0 +1,31 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Alarme RSI Videofied",
+        "description": "Configurez la connexion à votre panel d'alarme RSI Videofied.",
+        "data": {
+          "host": "Adresse d'écoute (laisser vide pour toutes les interfaces)",
+          "port": "Port d'écoute",
+          "alarm_code": "Code PIN de l'alarme (pour l'interface HA)",
+          "alarm_name": "Nom du périphérique"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossible de démarrer le serveur sur ce port",
+      "invalid_code": "Le code doit contenir au moins 4 chiffres"
+    },
+    "abort": {
+      "already_configured": "RSI Videofied est déjà configuré"
+    }
+  },
+  "entity": {
+    "sensor": {
+      "alarm_arm_source":            { "state": { "nothing": "Aucun" } },
+      "alarm_alert_source":          { "state": { "nothing": "Aucun" } },
+      "alarm_autoprotection_source": { "state": { "nothing": "Aucun" } },
+      "alarm_ping":                  { "state": { "nothing": "Aucun" } }
+    }
+  }
+}

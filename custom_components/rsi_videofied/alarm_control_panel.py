@@ -104,7 +104,6 @@ class RSIAlarmPanel(AlarmControlPanelEntity):
         if not self._check_code(code):
             _LOGGER.warning("RSI: arm_home rejected — wrong code")
             return
-        
         self._shared["state"] = STATE_ARMING
         self.async_write_ha_state()
         await self._hass.async_add_executor_job(self._panel.arm)

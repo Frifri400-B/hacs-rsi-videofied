@@ -57,12 +57,13 @@ def delete_x1a(s: str) -> str:
 
 
 class RSIPanel:
-    def __init__(self, host: str, port: int, on_state_change, on_connected, on_disconnected):
+    def __init__(self, host: str, port: int, on_state_change, on_sensor_change, on_connected, on_disconnected):
         self._host = host
         self._port = port
-        self._on_state_change = on_state_change
-        self._on_connected    = on_connected
-        self._on_disconnected = on_disconnected
+        self._on_state_change  = on_state_change
+        self._on_sensor_change = on_sensor_change
+        self._on_connected     = on_connected
+        self._on_disconnected  = on_disconnected
 
         self._server_sock: socket.socket | None = None
         self._conn:        socket.socket | None = None
@@ -121,7 +122,7 @@ class RSIPanel:
 
     def _handle_connection(self, conn: socket.socket):
         conn.settimeout(10)
-        serial, key = self._authenticate(conn)
+        serial, key, firmware = self._authenticate(conn)
         if not serial:
             _LOGGER.warning("RSI: authentication failed")
             conn.close()
@@ -131,7 +132,7 @@ class RSIPanel:
             self._conn = conn
             self._authenticated = True
 
-        self._on_connected(serial)
+        self._on_connected(serial, firmware)
 
         self._heartbeat_stop.clear()
         hb = threading.Thread(target=self._heartbeat, daemon=True, name="rsi_heartbeat")
@@ -187,12 +188,14 @@ class RSIPanel:
 
             raw = recv_message(conn)
             if 'AUTH_SUCCESS' in raw:
-                _LOGGER.info("RSI: authenticated (serial=%s)", serial)
-                return serial, key
+                parts_auth = raw.split(',')
+                firmware = parts_auth[5] if len(parts_auth) > 5 else None
+                _LOGGER.info("RSI: authenticated (serial=%s firmware=%s)", serial, firmware)
+                return serial, key, firmware
 
         except Exception as e:
             _LOGGER.error("RSI: auth error — %s", e)
-        return None, None
+        return None, None, None
 
 
     def _dispatch(self, message: str, conn: socket.socket):
@@ -254,6 +257,34 @@ class RSIPanel:
         if new_state:
             _LOGGER.info("RSI: state → %s", new_state)
             self._on_state_change(new_state)
+
+        source = event_data[1] if len(event_data) > 1 else None
+        badge  = event_data[2] if len(event_data) > 2 else None
+
+        if code == EVENT_ARMED:
+            self._on_sensor_change("alarm_arm", "ON")
+            self._on_sensor_change("alarm_arm_source", badge or source or "Nothing")
+        elif code == EVENT_DISARMED:
+            self._on_sensor_change("alarm_arm", "OFF")
+            self._on_sensor_change("alarm_arm_source", badge or source or "Nothing")
+        elif code == EVENT_INTRUSION:
+            self._on_sensor_change("alarm_alert", "ON")
+            self._on_sensor_change("alarm_alert_source", source or "Nothing")
+        elif code == EVENT_TAMPER:
+            self._on_sensor_change("alarm_autoprotection", "ON")
+            self._on_sensor_change("alarm_autoprotection_source", source or "Nothing")
+        elif code in ("4",):
+            self._on_sensor_change("alarm_autoprotection", "OFF")
+            self._on_sensor_change("alarm_autoprotection_source", "Nothing")
+        elif code == "19":
+            self._on_sensor_change("alarm_power", "OFF")
+        elif code == "20":
+            self._on_sensor_change("alarm_power", "ON")
+        elif code == "26":
+            self._on_sensor_change("alarm_ping", "pong")
+        elif code == "27":
+            self._on_sensor_change("alarm_alert", "OFF")
+            self._on_sensor_change("alarm_alert_source", "Nothing")
 
 
     def _heartbeat(self):
