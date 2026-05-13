@@ -1,7 +1,7 @@
 {
   "domain": "rsi_videofied",
   "name": "RSI Videofied Alarm",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "documentation": "https://github.com/Frifri400-B/hacs-rsi-videofied",
   "issue_tracker": "https://github.com/Frifri400-B/hacs-rsi-videofied/issues",
   "dependencies": [],

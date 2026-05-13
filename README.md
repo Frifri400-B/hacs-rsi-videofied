@@ -71,6 +71,7 @@ The integration starts a TCP server that the RSI panel connects to (same protoco
 
 - `pycryptodome >= 3.9.0` (installed automatically)
 - The RSI panel must be configured to connect to your Home Assistant server IP on port 888
+- [Hacs](https://www.hacs.xyz/)
 
 ## Credits
 

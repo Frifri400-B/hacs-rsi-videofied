@@ -1,4 +1,5 @@
 # coding: utf-8
+
 import logging
 from datetime import datetime, timezone
 
@@ -14,7 +15,6 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
-
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -32,8 +32,6 @@ async def async_setup_entry(
             entities.append(RSIAlarmSensor(entry, shared, s))
 
     async_add_entities(entities)
-
-
 
 class RSIBaseSensor(SensorEntity):
     _attr_has_entity_name = True
@@ -65,10 +63,8 @@ class RSIBaseSensor(SensorEntity):
         self._shared["listeners"].append(_on_update)
         self.async_on_remove(lambda: self._shared["listeners"].remove(_on_update))
 
-
-
 class RSIPanelInfoSensor(RSIBaseSensor):
-
+    
     @property
     def native_value(self):
         key = self._definition["key"]
@@ -110,13 +106,26 @@ class RSIPanelInfoSensor(RSIBaseSensor):
                 return {"formatted": f"{h}h {m}m {s}s"}
         return {}
 
-
-
 class RSIAlarmSensor(RSIBaseSensor):
-
+    
     @property
     def native_value(self):
-        return self._shared["sensors"].get(self._definition["key"], "Nothing")
+        key = self._definition["key"]
+        val = self._shared["sensors"].get(key, "Nothing")
+        return val
+
+    @property
+    def icon(self):
+        key = self._definition["key"]
+        icons = {
+            "alarm_last_test":         "mdi:clipboard-check-outline",
+            "alarm_radio_loss_source": "mdi:radio-tower",
+            "alarm_ping":              "mdi:lan-pending",
+            "alarm_arm_source":        "mdi:account-key",
+            "alarm_alert_source":      "mdi:alert-circle",
+            "alarm_autoprotection_source": "mdi:shield-alert",
+        }
+        return icons.get(key, "mdi:information-outline")
 
     @property
     def available(self) -> bool:

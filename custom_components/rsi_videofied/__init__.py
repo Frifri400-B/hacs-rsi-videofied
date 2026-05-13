@@ -1,4 +1,5 @@
 # coding: utf-8
+
 import logging
 
 from homeassistant.config_entries import ConfigEntry
@@ -11,8 +12,8 @@ _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS = ["alarm_control_panel", "binary_sensor", "sensor"]
 
-
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    
     hass.data.setdefault(DOMAIN, {})
 
     port       = entry.data.get(CONF_PORT, DEFAULT_PORT)
@@ -35,6 +36,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             "alarm_alert":                 "Unknown",
             "alarm_alert_source":          "Nothing",
             "alarm_ping":                  "Nothing",
+            "alarm_wrong_codes":           "OFF",
+            "alarm_duress":                "OFF",
+            "alarm_battery":               "ON",
+            "alarm_radio_loss":            "ON",
+            "alarm_siren":                 "OFF",
+            "alarm_last_test":             "Never",
+            "alarm_radio_loss_source":     "Nothing",
         }
     }
     hass.data[DOMAIN][entry.entry_id] = shared
@@ -74,14 +82,30 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     )
     shared["panel"] = panel
 
+    def _build_mappings(e):
+        opts = dict(e.options or {})
+        data = dict(e.data or {})
+        return {
+            "mapping_users": opts.get("mapping_users", data.get("mapping_users", {})),
+            "device_index":  opts.get("device_index",  data.get("device_index",  {})),
+        }
+
+    panel.update_mappings(_build_mappings(entry))
+
+    entry.async_on_unload(
+        entry.add_update_listener(
+            lambda hass, e: panel.update_mappings(_build_mappings(e))
+        )
+    )
+
     await hass.async_add_executor_job(panel.start)
     _LOGGER.info("RSI Videofied: server started on port %s", port)
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
 
-
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    
     shared = hass.data[DOMAIN].get(entry.entry_id, {})
     panel: RSIPanel = shared.get("panel")
     if panel:
@@ -92,7 +116,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data[DOMAIN].pop(entry.entry_id, None)
     return unload_ok
 
-
 def _notify_listeners(hass: HomeAssistant, shared: dict):
+    
     for cb in shared.get("listeners", []):
         hass.loop.call_soon_threadsafe(cb)

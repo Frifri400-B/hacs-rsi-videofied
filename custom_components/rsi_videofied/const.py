@@ -3,6 +3,7 @@ DOMAIN = "rsi_videofied"
 CONF_PORT        = "port"
 CONF_ALARM_CODE  = "alarm_code"
 CONF_ALARM_NAME  = "alarm_name"
+CONF_USER_CODES  = "user_codes"
 
 DEFAULT_PORT       = 888
 DEFAULT_ALARM_NAME = "RSI Videofied Alarm"
@@ -38,6 +39,13 @@ ALARM_SENSORS = [
     {"key": "alarm_alert",                "name": "Alert",                  "device_class": "problem",      "entity_type": "binary_sensor"},
     {"key": "alarm_alert_source",         "name": "Alert Source",           "device_class": None,           "entity_type": "sensor"},
     {"key": "alarm_ping",                 "name": "Ping",                   "device_class": None,           "entity_type": "sensor"},
+    {"key": "alarm_wrong_codes",          "name": "Wrong Codes",            "device_class": "problem",      "entity_type": "binary_sensor"},
+    {"key": "alarm_duress",               "name": "Duress Alert",           "device_class": "safety",       "entity_type": "binary_sensor"},
+    {"key": "alarm_battery",              "name": "Battery",                "device_class": "battery",      "entity_type": "binary_sensor"},
+    {"key": "alarm_radio_loss",           "name": "Radio Signal",           "device_class": "connectivity", "entity_type": "binary_sensor"},
+    {"key": "alarm_siren",                "name": "Siren",                  "device_class": "sound",        "entity_type": "binary_sensor"},
+    {"key": "alarm_last_test",            "name": "Last Test",              "device_class": None,           "entity_type": "sensor"},
+    {"key": "alarm_radio_loss_source",    "name": "Radio Loss Source",      "device_class": None,           "entity_type": "sensor"},
 ]
 
 PANEL_SENSORS = [

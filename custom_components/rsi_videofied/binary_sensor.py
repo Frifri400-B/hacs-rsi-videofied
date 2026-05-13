@@ -1,4 +1,5 @@
 # coding: utf-8
+
 import logging
 
 from homeassistant.components.binary_sensor import (
@@ -14,7 +15,6 @@ from .const import DOMAIN, CONF_ALARM_NAME, DEFAULT_ALARM_NAME, ALARM_SENSORS, C
 
 _LOGGER = logging.getLogger(__name__)
 
-
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
@@ -28,7 +28,6 @@ async def async_setup_entry(
             entities.append(RSIAlarmBinarySensor(entry, shared, s))
 
     async_add_entities(entities)
-
 
 class RSIBaseBinarySensor(BinarySensorEntity):
     _attr_has_entity_name = True
@@ -51,9 +50,8 @@ class RSIBaseBinarySensor(BinarySensorEntity):
         self._shared["listeners"].append(_on_update)
         self.async_on_remove(lambda: self._shared["listeners"].remove(_on_update))
 
-
 class RSIPanelConnectedSensor(RSIBaseBinarySensor):
-
+    
     _attr_device_class = BinarySensorDeviceClass.CONNECTIVITY
     _attr_name         = "Panel Connected"
 
@@ -65,9 +63,8 @@ class RSIPanelConnectedSensor(RSIBaseBinarySensor):
     def is_on(self) -> bool:
         return self._shared.get("connected", False)
 
-
 class RSIAlarmBinarySensor(RSIBaseBinarySensor):
-
+    
     def __init__(self, entry: ConfigEntry, shared: dict, definition: dict):
         super().__init__(entry, shared)
         self._definition       = definition
@@ -80,6 +77,22 @@ class RSIAlarmBinarySensor(RSIBaseBinarySensor):
     def is_on(self) -> bool:
         val = self._shared["sensors"].get(self._definition["key"], "OFF")
         return str(val).upper() in ("ON", "TRUE", "1")
+
+    @property
+    def icon(self):
+        key = self._definition["key"]
+        icons = {
+            "alarm_arm":         "mdi:lock" if self.is_on else "mdi:lock-open",
+            "alarm_power":       "mdi:power-plug" if self.is_on else "mdi:power-plug-off",
+            "alarm_autoprotection": "mdi:shield-check" if not self.is_on else "mdi:shield-alert",
+            "alarm_alert":       "mdi:bell" if self.is_on else "mdi:bell-off",
+            "alarm_battery":     "mdi:battery" if self.is_on else "mdi:battery-alert",
+            "alarm_radio_loss":  "mdi:wifi" if self.is_on else "mdi:wifi-off",
+            "alarm_siren":       "mdi:bullhorn" if self.is_on else "mdi:bullhorn-outline",
+            "alarm_wrong_codes": "mdi:lock-alert",
+            "alarm_duress":      "mdi:account-alert",
+        }
+        return icons.get(key, "mdi:information")
 
     @property
     def available(self) -> bool:

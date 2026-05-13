@@ -1,4 +1,5 @@
 # coding: utf-8
+
 import logging
 import socket
 import threading
@@ -11,7 +12,6 @@ _LOGGER = logging.getLogger(__name__)
 decode_hex = codecs.getdecoder("hex_codec")
 
 _recv_buffers: dict = {}
-
 
 def recv_message(conn):
     key = id(conn)
@@ -31,10 +31,8 @@ def recv_message(conn):
     _recv_buffers[key] = _recv_buffers[key][idx + 1:]
     return msg
 
-
 def clear_recv_buffer(conn):
     _recv_buffers.pop(id(conn), None)
-
 
 def generate_preshared_key(serial: str) -> str:
     return (
@@ -46,17 +44,15 @@ def generate_preshared_key(serial: str) -> str:
         serial[11] + serial[11] + '0' + serial[5]
     )
 
-
 def get_challenge_response(key: str, challenge: str) -> str:
     cipher = AES.new(decode_hex(key)[0], AES.MODE_ECB)
     return cipher.encrypt(decode_hex(challenge)[0]).hex().upper()
 
-
 def delete_x1a(s: str) -> str:
     return s[:-1] if s.endswith('\x1a') else s
 
-
 class RSIPanel:
+    
     def __init__(self, host: str, port: int, on_state_change, on_sensor_change, on_connected, on_disconnected):
         self._host = host
         self._port = port
@@ -71,9 +67,10 @@ class RSIPanel:
         self._authenticated = False
         self._stop = threading.Event()
         self._heartbeat_stop = threading.Event()
-
+        self._mappings: dict = {}
 
     def start(self):
+        
         t = threading.Thread(target=self._serve, daemon=True, name="rsi_panel_server")
         t.start()
 
@@ -95,7 +92,6 @@ class RSIPanel:
     @property
     def connected(self) -> bool:
         return self._conn is not None and self._authenticated
-
 
     def _serve(self):
         self._server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -158,7 +154,6 @@ class RSIPanel:
         conn.close()
         self._on_disconnected()
 
-
     def _authenticate(self, conn):
         try:
             conn.send(b"IDENT,1000\x1a")
@@ -197,7 +192,6 @@ class RSIPanel:
             _LOGGER.error("RSI: auth error — %s", e)
         return None, None, None
 
-
     def _dispatch(self, message: str, conn: socket.socket):
         parts = message.split(',') if ',' in message else [message]
         mtype = parts[0]
@@ -232,7 +226,6 @@ class RSIPanel:
         else:
             _LOGGER.debug("RSI: unknown message type '%s'", mtype)
 
-
     def _handle_event(self, event_data: list):
         from .const import (
             EVENT_INTRUSION, EVENT_TAMPER, EVENT_PANIC,
@@ -258,21 +251,24 @@ class RSIPanel:
             _LOGGER.info("RSI: state → %s", new_state)
             self._on_state_change(new_state)
 
-        source = event_data[1] if len(event_data) > 1 else None
-        badge  = event_data[2] if len(event_data) > 2 else None
+        source_id = event_data[1] if len(event_data) > 1 else None
+        badge_id  = event_data[2] if len(event_data) > 2 else None
+
+        source_name = self._resolve_device(source_id)
+        badge_name  = self._resolve_user(badge_id)
 
         if code == EVENT_ARMED:
             self._on_sensor_change("alarm_arm", "ON")
-            self._on_sensor_change("alarm_arm_source", badge or source or "Nothing")
+            self._on_sensor_change("alarm_arm_source", badge_name or source_name or "Nothing")
         elif code == EVENT_DISARMED:
             self._on_sensor_change("alarm_arm", "OFF")
-            self._on_sensor_change("alarm_arm_source", badge or source or "Nothing")
+            self._on_sensor_change("alarm_arm_source", badge_name or source_name or "Nothing")
         elif code == EVENT_INTRUSION:
             self._on_sensor_change("alarm_alert", "ON")
-            self._on_sensor_change("alarm_alert_source", source or "Nothing")
+            self._on_sensor_change("alarm_alert_source", source_name or "Nothing")
         elif code == EVENT_TAMPER:
             self._on_sensor_change("alarm_autoprotection", "ON")
-            self._on_sensor_change("alarm_autoprotection_source", source or "Nothing")
+            self._on_sensor_change("alarm_autoprotection_source", source_name or "Nothing")
         elif code in ("4",):
             self._on_sensor_change("alarm_autoprotection", "OFF")
             self._on_sensor_change("alarm_autoprotection_source", "Nothing")
@@ -286,12 +282,76 @@ class RSIPanel:
             self._on_sensor_change("alarm_alert", "OFF")
             self._on_sensor_change("alarm_alert_source", "Nothing")
 
+        elif code == "21":
+            self._on_sensor_change("alarm_battery", "OFF")
+            self._on_sensor_change("alarm_alert_source", source_name or "Nothing")
+
+        elif code == "22":
+            self._on_sensor_change("alarm_battery", "ON")
+
+        elif code == "23":
+            self._on_sensor_change("alarm_radio_loss", "OFF")
+            self._on_sensor_change("alarm_radio_loss_source", source_name or "Nothing")
+
+        elif code == "28":
+            from datetime import datetime, timezone
+            now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
+            self._on_sensor_change("alarm_last_test", now)
+
+        elif code == "33":
+            self._on_sensor_change("alarm_siren", "ON")
+            self._on_sensor_change("alarm_alert_source", source_name or "Nothing")
+
+        elif code == "34":
+            self._on_sensor_change("alarm_siren", "OFF")
+
+        elif code == "5":
+            self._on_sensor_change("alarm_alert", "ON")
+            self._on_sensor_change("alarm_alert_source", source_name or "Panic Button")
+
+        elif code == "6":
+            self._on_sensor_change("alarm_wrong_codes", "ON")
+
+        elif code == "7":
+            self._on_sensor_change("alarm_arm", "OFF")
+            self._on_sensor_change("alarm_arm_source", badge_name or "Duress disarm")
+            self._on_sensor_change("alarm_duress", "ON")
+
+        elif code == "8":
+            self._on_sensor_change("alarm_arm", "ON")
+            self._on_sensor_change("alarm_arm_source", badge_name or "Duress arm")
+            self._on_sensor_change("alarm_duress", "ON")
+
+    def _resolve_user(self, user_id: str | None) -> str | None:
+        
+        if not user_id:
+            return None
+        users = self._mappings.get("mapping_users", {})
+        return users.get(str(user_id))
+
+    def _resolve_device(self, device_id: str | None) -> str | None:
+        
+        if not device_id:
+            return None
+        devices = self._mappings.get("device_index", {})
+        entry = devices.get(str(device_id))
+        if isinstance(entry, dict):
+            name = entry.get("name", "")
+            zone = entry.get("zone", "")
+            return f"{name} ({zone})" if zone else name
+        return entry
+
+    def update_mappings(self, mappings: dict):
+        
+        self._mappings = mappings
+        _LOGGER.debug("RSI: mappings updated — %d users, %d devices",
+                      len(mappings.get("mapping_users", {})),
+                      len(mappings.get("device_index", {})))
 
     def _heartbeat(self):
         while not self._heartbeat_stop.wait(60):
             _LOGGER.debug("RSI: heartbeat STATUS")
             self._send("STATUS")
-
 
     def _send(self, msg: str) -> bool:
         with self._lock:

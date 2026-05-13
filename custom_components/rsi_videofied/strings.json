@@ -5,10 +5,35 @@
         "title": "RSI Videofied Alarm",
         "description": "Configure the connection to your RSI Videofied alarm panel.",
         "data": {
-          "host": "Bind address (leave empty for all interfaces)",
+          "alarm_name": "Device name",
           "port": "Listening port",
-          "alarm_code": "Alarm PIN code (for HA UI)",
-          "alarm_name": "Device name"
+          "alarm_code": "Master PIN code (admin)"
+        }
+      },
+      "user_codes": {
+        "title": "User Codes",
+        "description": "Associate a PIN code to each user. The name will appear in the Arm Source sensor. Leave empty to skip.",
+        "data": {
+          "ucode_1_code": "User 1 — Code",
+          "ucode_1_name": "User 1 — Name",
+          "ucode_2_code": "User 2 — Code",
+          "ucode_2_name": "User 2 — Name",
+          "ucode_3_code": "User 3 — Code",
+          "ucode_3_name": "User 3 — Name",
+          "ucode_4_code": "User 4 — Code",
+          "ucode_4_name": "User 4 — Name",
+          "ucode_5_code": "User 5 — Code",
+          "ucode_5_name": "User 5 — Name",
+          "ucode_6_code": "User 6 — Code",
+          "ucode_6_name": "User 6 — Name",
+          "ucode_7_code": "User 7 — Code",
+          "ucode_7_name": "User 7 — Name",
+          "ucode_8_code": "User 8 — Code",
+          "ucode_8_name": "User 8 — Name",
+          "ucode_9_code": "User 9 — Code",
+          "ucode_9_name": "User 9 — Name",
+          "ucode_10_code": "User 10 — Code",
+          "ucode_10_name": "User 10 — Name"
         }
       }
     },
@@ -18,6 +43,139 @@
     },
     "abort": {
       "already_configured": "RSI Videofied is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "General Settings",
+        "data": {
+          "alarm_name": "Device name",
+          "port": "Listening port",
+          "alarm_code": "Master PIN code (admin)"
+        }
+      },
+      "user_codes": {
+        "title": "User Codes",
+        "description": "Associate a PIN code to each user. Leave empty to skip.",
+        "data": {
+          "ucode_1_code": "User 1 — Code",
+          "ucode_1_name": "User 1 — Name",
+          "ucode_2_code": "User 2 — Code",
+          "ucode_2_name": "User 2 — Name",
+          "ucode_3_code": "User 3 — Code",
+          "ucode_3_name": "User 3 — Name",
+          "ucode_4_code": "User 4 — Code",
+          "ucode_4_name": "User 4 — Name",
+          "ucode_5_code": "User 5 — Code",
+          "ucode_5_name": "User 5 — Name",
+          "ucode_6_code": "User 6 — Code",
+          "ucode_6_name": "User 6 — Name",
+          "ucode_7_code": "User 7 — Code",
+          "ucode_7_name": "User 7 — Name",
+          "ucode_8_code": "User 8 — Code",
+          "ucode_8_name": "User 8 — Name",
+          "ucode_9_code": "User 9 — Code",
+          "ucode_9_name": "User 9 — Name",
+          "ucode_10_code": "User 10 — Code",
+          "ucode_10_name": "User 10 — Name"
+        }
+      },
+      "users": {
+        "title": "Badge Mapping",
+        "description": "Map badge/code IDs from the panel to names. Leave empty to skip.",
+        "data": {
+          "user_1_id": "User 1 — ID",
+          "user_1_name": "User 1 — Name",
+          "user_2_id": "User 2 — ID",
+          "user_2_name": "User 2 — Name",
+          "user_3_id": "User 3 — ID",
+          "user_3_name": "User 3 — Name",
+          "user_4_id": "User 4 — ID",
+          "user_4_name": "User 4 — Name",
+          "user_5_id": "User 5 — ID",
+          "user_5_name": "User 5 — Name",
+          "user_6_id": "User 6 — ID",
+          "user_6_name": "User 6 — Name",
+          "user_7_id": "User 7 — ID",
+          "user_7_name": "User 7 — Name",
+          "user_8_id": "User 8 — ID",
+          "user_8_name": "User 8 — Name",
+          "user_9_id": "User 9 — ID",
+          "user_9_name": "User 9 — Name",
+          "user_10_id": "User 10 — ID",
+          "user_10_name": "User 10 — Name"
+        }
+      },
+      "devices": {
+        "title": "Devices & Zones",
+        "description": "Map peripheral IDs to names and zones. Leave empty to skip.",
+        "data": {
+          "dev_1_id": "Device 1 — ID",
+          "dev_1_name": "Device 1 — Name",
+          "dev_1_zone": "Device 1 — Zone",
+          "dev_2_id": "Device 2 — ID",
+          "dev_2_name": "Device 2 — Name",
+          "dev_2_zone": "Device 2 — Zone",
+          "dev_3_id": "Device 3 — ID",
+          "dev_3_name": "Device 3 — Name",
+          "dev_3_zone": "Device 3 — Zone",
+          "dev_4_id": "Device 4 — ID",
+          "dev_4_name": "Device 4 — Name",
+          "dev_4_zone": "Device 4 — Zone",
+          "dev_5_id": "Device 5 — ID",
+          "dev_5_name": "Device 5 — Name",
+          "dev_5_zone": "Device 5 — Zone",
+          "dev_6_id": "Device 6 — ID",
+          "dev_6_name": "Device 6 — Name",
+          "dev_6_zone": "Device 6 — Zone",
+          "dev_7_id": "Device 7 — ID",
+          "dev_7_name": "Device 7 — Name",
+          "dev_7_zone": "Device 7 — Zone",
+          "dev_8_id": "Device 8 — ID",
+          "dev_8_name": "Device 8 — Name",
+          "dev_8_zone": "Device 8 — Zone",
+          "dev_9_id": "Device 9 — ID",
+          "dev_9_name": "Device 9 — Name",
+          "dev_9_zone": "Device 9 — Zone",
+          "dev_10_id": "Device 10 — ID",
+          "dev_10_name": "Device 10 — Name",
+          "dev_10_zone": "Device 10 — Zone",
+          "dev_11_id": "Device 11 — ID",
+          "dev_11_name": "Device 11 — Name",
+          "dev_11_zone": "Device 11 — Zone",
+          "dev_12_id": "Device 12 — ID",
+          "dev_12_name": "Device 12 — Name",
+          "dev_12_zone": "Device 12 — Zone",
+          "dev_13_id": "Device 13 — ID",
+          "dev_13_name": "Device 13 — Name",
+          "dev_13_zone": "Device 13 — Zone",
+          "dev_14_id": "Device 14 — ID",
+          "dev_14_name": "Device 14 — Name",
+          "dev_14_zone": "Device 14 — Zone",
+          "dev_15_id": "Device 15 — ID",
+          "dev_15_name": "Device 15 — Name",
+          "dev_15_zone": "Device 15 — Zone",
+          "dev_16_id": "Device 16 — ID",
+          "dev_16_name": "Device 16 — Name",
+          "dev_16_zone": "Device 16 — Zone",
+          "dev_17_id": "Device 17 — ID",
+          "dev_17_name": "Device 17 — Name",
+          "dev_17_zone": "Device 17 — Zone",
+          "dev_18_id": "Device 18 — ID",
+          "dev_18_name": "Device 18 — Name",
+          "dev_18_zone": "Device 18 — Zone",
+          "dev_19_id": "Device 19 — ID",
+          "dev_19_name": "Device 19 — Name",
+          "dev_19_zone": "Device 19 — Zone",
+          "dev_20_id": "Device 20 — ID",
+          "dev_20_name": "Device 20 — Name",
+          "dev_20_zone": "Device 20 — Zone"
+        }
+      }
+    },
+    "error": {
+      "invalid_code": "Code must be at least 4 digits"
     }
   }
 }

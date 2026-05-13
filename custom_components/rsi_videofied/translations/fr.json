@@ -5,10 +5,35 @@
         "title": "Alarme RSI Videofied",
         "description": "Configurez la connexion à votre panel d'alarme RSI Videofied.",
         "data": {
-          "host": "Adresse d'écoute (laisser vide pour toutes les interfaces)",
+          "alarm_name": "Nom du périphérique",
           "port": "Port d'écoute",
-          "alarm_code": "Code PIN de l'alarme (pour l'interface HA)",
-          "alarm_name": "Nom du périphérique"
+          "alarm_code": "Code PIN maître (admin)"
+        }
+      },
+      "user_codes": {
+        "title": "Codes Utilisateurs",
+        "description": "Associez un code PIN à chaque utilisateur. Le nom s'affichera dans le sensor Source d'armement. Laissez vide pour ignorer.",
+        "data": {
+          "ucode_1_code": "Utilisateur 1 — Code",
+          "ucode_1_name": "Utilisateur 1 — Nom",
+          "ucode_2_code": "Utilisateur 2 — Code",
+          "ucode_2_name": "Utilisateur 2 — Nom",
+          "ucode_3_code": "Utilisateur 3 — Code",
+          "ucode_3_name": "Utilisateur 3 — Nom",
+          "ucode_4_code": "Utilisateur 4 — Code",
+          "ucode_4_name": "Utilisateur 4 — Nom",
+          "ucode_5_code": "Utilisateur 5 — Code",
+          "ucode_5_name": "Utilisateur 5 — Nom",
+          "ucode_6_code": "Utilisateur 6 — Code",
+          "ucode_6_name": "Utilisateur 6 — Nom",
+          "ucode_7_code": "Utilisateur 7 — Code",
+          "ucode_7_name": "Utilisateur 7 — Nom",
+          "ucode_8_code": "Utilisateur 8 — Code",
+          "ucode_8_name": "Utilisateur 8 — Nom",
+          "ucode_9_code": "Utilisateur 9 — Code",
+          "ucode_9_name": "Utilisateur 9 — Nom",
+          "ucode_10_code": "Utilisateur 10 — Code",
+          "ucode_10_name": "Utilisateur 10 — Nom"
         }
       }
     },
@@ -20,12 +45,137 @@
       "already_configured": "RSI Videofied est déjà configuré"
     }
   },
-  "entity": {
-    "sensor": {
-      "alarm_arm_source":            { "state": { "nothing": "Aucun" } },
-      "alarm_alert_source":          { "state": { "nothing": "Aucun" } },
-      "alarm_autoprotection_source": { "state": { "nothing": "Aucun" } },
-      "alarm_ping":                  { "state": { "nothing": "Aucun" } }
+  "options": {
+    "step": {
+      "init": {
+        "title": "Paramètres généraux",
+        "data": {
+          "alarm_name": "Nom du périphérique",
+          "port": "Port d'écoute",
+          "alarm_code": "Code PIN maître (admin)"
+        }
+      },
+      "user_codes": {
+        "title": "Codes Utilisateurs",
+        "description": "Associez un code PIN à chaque utilisateur. Laissez vide pour ignorer.",
+        "data": {
+          "ucode_1_code": "Utilisateur 1 — Code",
+          "ucode_1_name": "Utilisateur 1 — Nom",
+          "ucode_2_code": "Utilisateur 2 — Code",
+          "ucode_2_name": "Utilisateur 2 — Nom",
+          "ucode_3_code": "Utilisateur 3 — Code",
+          "ucode_3_name": "Utilisateur 3 — Nom",
+          "ucode_4_code": "Utilisateur 4 — Code",
+          "ucode_4_name": "Utilisateur 4 — Nom",
+          "ucode_5_code": "Utilisateur 5 — Code",
+          "ucode_5_name": "Utilisateur 5 — Nom",
+          "ucode_6_code": "Utilisateur 6 — Code",
+          "ucode_6_name": "Utilisateur 6 — Nom",
+          "ucode_7_code": "Utilisateur 7 — Code",
+          "ucode_7_name": "Utilisateur 7 — Nom",
+          "ucode_8_code": "Utilisateur 8 — Code",
+          "ucode_8_name": "Utilisateur 8 — Nom",
+          "ucode_9_code": "Utilisateur 9 — Code",
+          "ucode_9_name": "Utilisateur 9 — Nom",
+          "ucode_10_code": "Utilisateur 10 — Code",
+          "ucode_10_name": "Utilisateur 10 — Nom"
+        }
+      },
+      "users": {
+        "title": "Mapping Badges",
+        "description": "Associez les ID de badge/code du panel à des noms. Laissez vide pour ignorer.",
+        "data": {
+          "user_1_id": "Utilisateur 1 — ID",
+          "user_1_name": "Utilisateur 1 — Nom",
+          "user_2_id": "Utilisateur 2 — ID",
+          "user_2_name": "Utilisateur 2 — Nom",
+          "user_3_id": "Utilisateur 3 — ID",
+          "user_3_name": "Utilisateur 3 — Nom",
+          "user_4_id": "Utilisateur 4 — ID",
+          "user_4_name": "Utilisateur 4 — Nom",
+          "user_5_id": "Utilisateur 5 — ID",
+          "user_5_name": "Utilisateur 5 — Nom",
+          "user_6_id": "Utilisateur 6 — ID",
+          "user_6_name": "Utilisateur 6 — Nom",
+          "user_7_id": "Utilisateur 7 — ID",
+          "user_7_name": "Utilisateur 7 — Nom",
+          "user_8_id": "Utilisateur 8 — ID",
+          "user_8_name": "Utilisateur 8 — Nom",
+          "user_9_id": "Utilisateur 9 — ID",
+          "user_9_name": "Utilisateur 9 — Nom",
+          "user_10_id": "Utilisateur 10 — ID",
+          "user_10_name": "Utilisateur 10 — Nom"
+        }
+      },
+      "devices": {
+        "title": "Périphériques & Zones",
+        "description": "Associez les ID de périphériques à des noms et zones. Laissez vide pour ignorer.",
+        "data": {
+          "dev_1_id": "Périph. 1 — ID",
+          "dev_1_name": "Périph. 1 — Nom",
+          "dev_1_zone": "Périph. 1 — Zone",
+          "dev_2_id": "Périph. 2 — ID",
+          "dev_2_name": "Périph. 2 — Nom",
+          "dev_2_zone": "Périph. 2 — Zone",
+          "dev_3_id": "Périph. 3 — ID",
+          "dev_3_name": "Périph. 3 — Nom",
+          "dev_3_zone": "Périph. 3 — Zone",
+          "dev_4_id": "Périph. 4 — ID",
+          "dev_4_name": "Périph. 4 — Nom",
+          "dev_4_zone": "Périph. 4 — Zone",
+          "dev_5_id": "Périph. 5 — ID",
+          "dev_5_name": "Périph. 5 — Nom",
+          "dev_5_zone": "Périph. 5 — Zone",
+          "dev_6_id": "Périph. 6 — ID",
+          "dev_6_name": "Périph. 6 — Nom",
+          "dev_6_zone": "Périph. 6 — Zone",
+          "dev_7_id": "Périph. 7 — ID",
+          "dev_7_name": "Périph. 7 — Nom",
+          "dev_7_zone": "Périph. 7 — Zone",
+          "dev_8_id": "Périph. 8 — ID",
+          "dev_8_name": "Périph. 8 — Nom",
+          "dev_8_zone": "Périph. 8 — Zone",
+          "dev_9_id": "Périph. 9 — ID",
+          "dev_9_name": "Périph. 9 — Nom",
+          "dev_9_zone": "Périph. 9 — Zone",
+          "dev_10_id": "Périph. 10 — ID",
+          "dev_10_name": "Périph. 10 — Nom",
+          "dev_10_zone": "Périph. 10 — Zone",
+          "dev_11_id": "Périph. 11 — ID",
+          "dev_11_name": "Périph. 11 — Nom",
+          "dev_11_zone": "Périph. 11 — Zone",
+          "dev_12_id": "Périph. 12 — ID",
+          "dev_12_name": "Périph. 12 — Nom",
+          "dev_12_zone": "Périph. 12 — Zone",
+          "dev_13_id": "Périph. 13 — ID",
+          "dev_13_name": "Périph. 13 — Nom",
+          "dev_13_zone": "Périph. 13 — Zone",
+          "dev_14_id": "Périph. 14 — ID",
+          "dev_14_name": "Périph. 14 — Nom",
+          "dev_14_zone": "Périph. 14 — Zone",
+          "dev_15_id": "Périph. 15 — ID",
+          "dev_15_name": "Périph. 15 — Nom",
+          "dev_15_zone": "Périph. 15 — Zone",
+          "dev_16_id": "Périph. 16 — ID",
+          "dev_16_name": "Périph. 16 — Nom",
+          "dev_16_zone": "Périph. 16 — Zone",
+          "dev_17_id": "Périph. 17 — ID",
+          "dev_17_name": "Périph. 17 — Nom",
+          "dev_17_zone": "Périph. 17 — Zone",
+          "dev_18_id": "Périph. 18 — ID",
+          "dev_18_name": "Périph. 18 — Nom",
+          "dev_18_zone": "Périph. 18 — Zone",
+          "dev_19_id": "Périph. 19 — ID",
+          "dev_19_name": "Périph. 19 — Nom",
+          "dev_19_zone": "Périph. 19 — Zone",
+          "dev_20_id": "Périph. 20 — ID",
+          "dev_20_name": "Périph. 20 — Nom",
+          "dev_20_zone": "Périph. 20 — Zone"
+        }
+      }
+    },
+    "error": {
+      "invalid_code": "Le code doit contenir au moins 4 chiffres"
     }
   }
 }
